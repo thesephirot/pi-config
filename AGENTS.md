@@ -22,37 +22,37 @@ The standard pipeline for complex tasks follows this sequence:
 - **Role**: The Manager. Coordinates all other agents.
 - **Constraint**: **NEVER** performs tasks itself. It only delegates and verifies.
 - **When to use**: The primary entry point for all complex requests.
-- **Definition**: `pi-subagents/agents/orchestrator.md`
+- **Definition**: `pi-subagents/agents/Orchestrator.md`
 
 ### 🔍 Explore
 - **Role**: The Scout. Fast, targeted search for symbols, files, and patterns.
 - **Constraint**: Read-only. No synthesis or deep analysis.
 - **When to use**: "Where is X defined?", "Find all files using Y."
-- **Definition**: `pi-subagents/agents/explore.md`
+- **Definition**: `pi-subagents/agents/Explore.md`
 
 ### 📚 Researcher
 - **Role**: The Librarian. Deep context gathering and synthesis.
 - **Constraint**: Read-only. Produces reports, not code.
 - **When to use**: "Explain how the authentication flow works," "Research the best way to integrate Z."
-- **Definition**: `pi-subagents/agents/researcher.md`
+- **Definition**: `pi-subagents/agents/Researcher.md`
 
 ### 🏛️ Architect
 - **Role**: The Designer. High-level system design and trade-off analysis.
 - **Constraint**: Advisory only. **NEVER** writes or edits code.
 - **When to use**: "How should we restructure the API?", "What are the pros/cons of approach A vs B?"
-- **Definition**: `pi-subagents/agents/architect.md`
+- **Definition**: `pi-subagents/agents/Architect.md`
 
 ### 📝 Plan
 - **Role**: The Strategist. Creates detailed, step-by-step implementation plans.
 - **Constraint**: Read-only. Must provide absolute paths and explicit steps.
 - **When to use**: "Create a plan to implement the feature designed by the Architect."
-- **Definition**: `pi-subagents/agents/plan.md`
+- **Definition**: `pi-subagents/agents/Plan.md`
 
 ### 🛠️ Coder
 - **Role**: The Builder. Pure implementation.
 - **Constraint**: **NEVER** plans or refactors beyond the provided plan. Requires a plan to start.
 - **When to use**: "Implement the changes specified in the Plan."
-- **Definition**: `pi-subagents/agents/coder.md`
+- **Definition**: `pi-subagents/agents/Coder.md`
 
 ---
 
