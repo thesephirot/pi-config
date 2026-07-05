@@ -46,11 +46,9 @@ Before setting up Pi, ensure you have [llama-swap](https://github.com/mostlygeek
 
    ```yaml
    # ./llama-swap/config.yaml
-   models:
-     - path: /path/to/your/models
-       name: codestral-22b-q8
-       api: llama-cpp
-       max_ctx_size: 8192
+    models:
+    gemma31q4:
+      cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf --n-gpu-layers 999 --ctx-size 262144 --host 0.0.0.0  --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0
    ```
 
 3. **Configure model groups** (optional):
