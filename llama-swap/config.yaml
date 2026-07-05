@@ -43,7 +43,7 @@ routing:
   router:
     settings:
       groups: 
-        "test2":
+        "clever":
           # swap: false lets all members stay loaded at once
           swap: false
           # exclusive: false means requesting a member loads it without
@@ -51,4 +51,13 @@ routing:
           exclusive: false
           members:
             - gemma31q4
+            - gemma26
+        "code":
+          # swap: false lets all members stay loaded at once
+          swap: false
+          # exclusive: false means requesting a member loads it without
+          # unloading any other group
+          exclusive: false
+          members:
+            - qwen36-27b-mtp-q3
             - gemma26
