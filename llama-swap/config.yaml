@@ -67,27 +67,27 @@ models:
     cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q4_K_M.gguf --n-gpu-layers 999 --ctx-size 262144 --host 0.0.0.0 --temp 0.7 --top-p 0.8 --top-k 20 --split-mode none --main-gpu 0
   qwen36-a3b-q6:
     filters:
-        stripParams: "temperature, top_p, top_k, min_p, presence_penalty, repeat_penalty"
-        setParamsByID:
-          "${MODEL_ID}:thinking":
-            chat_template_kwargs:
-              enable_thinking: true
-              preserve_thinking: true
-            reasoning_budget: 4096
-            temperature: 1.0
-            top_p: 0.9
-            top_k: 20
-            min_p: 0.1
-            presence_penalty: 0.0
-            repeat_penalty: 1.0
-          "${MODEL_ID}:nothinking":
-            chat_template_kwargs:
-              enable_thinking: false
-            reasoning_budget: 0
-            temperature: 0.1
-            top_p: 0.95
-            top_k: 20
-            min_p: 0.1
+      stripParams: "temperature, top_p, top_k, min_p, presence_penalty, repeat_penalty"
+      setParamsByID:
+        "${MODEL_ID}:thinking":
+          chat_template_kwargs:
+            enable_thinking: true
+            preserve_thinking: true
+          reasoning_budget: 4096
+          temperature: 1.0
+          top_p: 0.9
+          top_k: 20
+          min_p: 0.1
+          presence_penalty: 0.0
+          repeat_penalty: 1.0
+        "${MODEL_ID}:nothinking":
+          chat_template_kwargs:
+            enable_thinking: false
+          reasoning_budget: 0
+          temperature: 0.1
+          top_p: 0.95
+          top_k: 20
+          min_p: 0.1
     cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q6_K.gguf --n-gpu-layers 99 --ctx-size 131072 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --jinja
   # qwen36-a3b-q8:
   #     filters:
@@ -163,8 +163,8 @@ routing:
           # unloading any other group
           exclusive: false
           members:
-            - qwen36-a3b-q8
-            - qwen35-9b-q4
+            - qwen36-27b-mtp-q3
+            - gemma26
         # "code":
         #   # swap: false lets all members stay loaded at once
         #   swap: false
