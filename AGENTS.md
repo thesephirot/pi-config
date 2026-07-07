@@ -22,37 +22,37 @@ The standard pipeline for complex tasks follows this sequence:
 - **Role**: The Manager. Coordinates all other agents.
 - **Constraint**: **NEVER** performs tasks itself. It only delegates and verifies.
 - **When to use**: The primary entry point for all complex requests.
-- **Definition**: `pi-subagents/agents/orchestrator.md`
+- **Definition**: `subagents/agents/orchestrator.md`
 
 ### 🔍 explore
 - **Role**: The Scout. Fast, targeted search for symbols, files, and patterns.
 - **Constraint**: Read-only. No synthesis or deep analysis.
 - **When to use**: "Where is X defined?", "Find all files using Y."
-- **Definition**: `pi-subagents/agents/explore.md`
+- **Definition**: `subagents/agents/explore.md`
 
 ### 📚 researcher
 - **Role**: The Librarian. Deep context gathering and synthesis.
 - **Constraint**: Read-only. Produces reports, not code.
 - **When to use**: "Explain how the authentication flow works," "Research the best way to integrate Z."
-- **Definition**: `pi-subagents/agents/researcher.md`
+- **Definition**: `subagents/agents/researcher.md`
 
 ### 🏛️ architect
 - **Role**: The Designer. High-level system design and trade-off analysis.
 - **Constraint**: Advisory only. **NEVER** writes or edits code.
 - **When to use**: "How should we restructure the API?", "What are the pros/cons of approach A vs B?"
-- **Definition**: `pi-subagents/agents/architect.md`
+- **Definition**: `subagents/agents/architect.md`
 
 ### 📝 plan
 - **Role**: The Strategist. Creates detailed, step-by-step implementation plans.
 - **Constraint**: Read-only. Must provide absolute paths and explicit steps.
 - **When to use**: "Create a plan to implement the feature designed by the architect."
-- **Definition**: `pi-subagents/agents/plan.md`
+- **Definition**: `subagents/agents/plan.md`
 
 ### 🛠️ coder
 - **Role**: The Builder. Pure implementation.
 - **Constraint**: **NEVER** plans or refactors beyond the provided plan. Requires a plan to start.
 - **When to use**: "Implement the changes specified in the plan."
-- **Definition**: `pi-subagents/agents/coder.md`
+- **Definition**: `subagents/agents/coder.md`
 
 ---
 
@@ -73,7 +73,7 @@ When prompting the system, be explicit about the desired outcome. The orchestrat
 ## ➕ Adding New Agents
 
 To add a new specialized agent:
-1. Create a new `.md` file in `pi-subagents/agents/` — agent definitions are used by taskflow phases, not the subagents runtime.
+1. Create a new `.md` file in `subagents/agents/` — agent definitions are used by taskflow phases.
 2. Include a YAML frontmatter with `description`, `tools`, and `model`.
 3. Define strict **Role & Constraints** to prevent overlap with existing agents.
 4. Update this `AGENTS.md` file to include the new role in the registry.

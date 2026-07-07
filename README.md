@@ -98,7 +98,6 @@ Install the necessary Pi extensions for taskflow, web access, coding capabilitie
 ```bash
 pi install npm:pi-taskflow
 pi install npm:pi-web-access
-pi install npm:@earendil-works/pi-coding-agent
 pi install npm:@danielmeneses/pi-llama-swap
 ```
 
@@ -150,7 +149,7 @@ Choose the actual model you want to use:
 
 ## Taskflow Configuration
 
-The `pi-taskflow` extension enables declarative, multi-phase workflow orchestration. Agent definitions (`.md` files) still live in `.pi/agents/`, but the orchestration layer is taskflow — not the old `@tintinweb/pi-subagents` framework.
+The `pi-taskflow` extension enables declarative, multi-phase workflow orchestration. Agent definitions (`.md` files) still live in `.pi/agents/`, the orchestration layer is taskflow.
 
 ### Setup Agents
 
@@ -158,7 +157,7 @@ Copy the agent definitions to your `.pi` directory:
 
 ```bash
 mkdir -p .pi
-cp -r ./pi-subagents/agents/* .pi/agents/
+cp -r ./subagents/agents/* .pi/agents/
 ```
 
 Directory structure:
