@@ -223,6 +223,46 @@ Test the subagent system:
 hey, please review the readme and format it pretty. use coder to do the actual work.
 ```
 
+This tests the orchestrator→coder delegation chain. Success = the readme gets formatted by the coder agent (not done directly by Pi). Check the fleet view (`/agents`) to confirm the orchestrator spawned the coder.
+
+---
+
+## Troubleshooting
+
+### Llama-Swap Not Responding
+- Verify the container is running: `docker ps | grep llama-swap`
+- Check port mapping: the Docker `-p 8080:8080` flag must match the port in Pi's model configuration
+- Check logs: `docker logs <container-name>` for model loading errors
+- Ensure `${PORT}` in llama-swap's `config.yaml` matches the port Pi expects (default `8080`)
+
+### Agent Not Spawning
+- Verify the agent `.md` file exists in `.pi/agents/` and has valid YAML frontmatter
+- Check `/agents` output — disabled agents show as `✕` and won't be selected
+- Ensure `scopeModels` is set correctly in `subagents.json` (see [CONFIG.md](./CONFIG.md))
+- If the agent specifies a model that doesn't exist in llama-swap, spawning will fail
+
+### Model Loading Errors
+- Verify the model `.gguf` file exists at the path specified in llama-swap's `config.yaml`
+- Check GPU memory: large models (31B+) need sufficient VRAM — reduce `--n-gpu-layers` if OOM
+- For Vulkan: ensure `/dev/dri` device is accessible inside the container
+- For CUDA: ensure the correct NVIDIA drivers are installed on the host
+
+### Subagent Workflow Hangs
+- Check `graceTurns` setting in `subagents.json` — if too low, agents get terminated before finishing
+- Check `maxConcurrent` — if set to `1`, parallel tasks queue up sequentially
+- Use `/agents` to see if subagents are stuck in `in_progress` state
+- Increase `defaultMaxTurns` if agents are running out of turns before completing their work
+
+### `${PORT}` Variable
+
+The llama-swap `config.yaml` uses `${PORT}` as a placeholder for the server port. When running Docker, ensure the port in your config matches the `-p` mapping. To avoid confusion, you can replace `${PORT}` with the literal port number (e.g., `8080`):
+
+```yaml
+models:
+  gemma31q4:
+    cmd: llama-server --port 8080 --model /models/... --n-gpu-layers 999 --ctx-size 262144
+```
+
 ---
 
 ## Quick Reference
