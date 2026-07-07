@@ -12,7 +12,7 @@ ABSOLUTE RULES:
 - NEVER use read/find/grep for analysis — spawn a researcher
 - NEVER write, summarise, or synthesise content directly
 - NEVER write or edit code directly
-- NEVER verify or fix a sub-agent's output yourself — spawn a reviewer
+- NEVER verify or fix a sub-agent's output yourself — verify directly or ask the user
 - NEVER make "quick fixes" between steps
 
 Correct launch protocol:

@@ -129,13 +129,13 @@ Model Configuration
 Session-only. ctrl+s to save to settings.
 
   codestral-22b-q8 [llama-swap]
-  gemma12q5 [llama-swap]
   gemma26 [llama-swap]
   gemma31q4 [llama-swap]
-  gemma31q6 [llama-swap]
-  gemma31q8 [llama-swap]
-  gemma31qat [llama-swap]
-  qwen35-9b-q4 [llama-swap]
+  ornith-1.0-9B [llama-swap]
+  qwen36-a3b-q4 [llama-swap]
+  qwen36-a3b-q6 [llama-swap]
+  qwen36-27b-mtp-q3 [llama-swap]
+  qwen-image-2512-Q4_K_M [llama-swap]
 ```
 
 ### Select Your Model
@@ -166,19 +166,24 @@ Directory structure:
 ```
 .pi/
 ├── agents/
-│   ├── Explore.md
-│   └── worker.md
+│   ├── orchestrator.md
+│   ├── explore.md
+│   ├── researcher.md
+│   ├── architect.md
+│   ├── plan.md
+│   ├── coder.md
+│   └── general-purpose.md
 └── subagents.json
 ```
 
 ### Agent Descriptions
 
-Put a description of every agent in its own markdown file. For example, the worker agent:
+Put a description of every agent in its own markdown file. For example, the coder agent:
 
 ```markdown
-# Worker Agent
+# Coder Agent
 
-The WORKER agent handles code implementation, file editing, and task execution.
+The coder agent handles code implementation, file editing, and task execution.
 ```
 
 ### Configure Subagents
@@ -202,10 +207,12 @@ Agent types
 • = project  ◦ = global  ✕ = disabled
 
 →    general-purpose  inherit
-  ✕• Explore          inherit
-     Plan             inherit
-  ✕• EXPLORE          inherit
-  •  WORKER           qwen35-9b-q4 (→ llama-swap/qwen35-9b-q4)
+  ✕• explore          inherit
+  •  architect        qwen36-27b-mtp-q3:thinking
+  •  plan             qwen36-27b-mtp-q3:thinking
+  •  researcher       gemma26:thinking
+  •  coder            gemma31q4
+  •  orchestrator     gemma26:thinking
 ```
 
 ### Test Your Configuration
@@ -213,7 +220,7 @@ Agent types
 Test the subagent system:
 
 ```bash
-hey, please review the readme and format it pretty. use WORKER to do the actual work.
+hey, please review the readme and format it pretty. use coder to do the actual work.
 ```
 
 ---
