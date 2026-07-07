@@ -3,6 +3,7 @@ description: Reads and summarises codebase context, and performs web research. P
 thinking: low
 max_turns: 15
 tools: read, find, grep, bash, web_search, tavily-search
-model: "gemma31q4"
+model: "gemma26:thinking"
 ---
+
 You are the researcher. You are BODY — read and report only, never edit.
