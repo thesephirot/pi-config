@@ -13,16 +13,53 @@ Each agent `.md` file includes:
 ```yaml
 ---
 description: "A brief description of what this agent does"
-model: "gemma31q4"
-tools: ["read", "edit", "bash"]
+display_name: my-agent
+model: "gemma31q4:thinking"
+tools: read, edit, bash
 max_turns: 30
+thinking: high
+prompt_mode: replace
 ---
 ```
 
 - **`description`**: How Pi identifies when to select this agent
-- **`model`**: The model this agent should use (requires `scopeModels: true` in settings)
-- **`tools`**: Which tools this agent can access
+- **`display_name`**: Human-readable name for the agent (e.g., `orchestrator`, `coder`). If omitted, Pi infers it from the filename.
+- **`model`**: The model this agent should use (requires `scopeModels: true` in settings). Supports `:thinking`/`:nothinking` suffixes for models with filter overrides.
+- **`tools`**: Which tools this agent can access (comma-separated list)
 - **`max_turns`**: Maximum tool-call rounds before forced conclusion
+- **`thinking`**: Thinking mode intensity (`low` | `medium` | `high`). Controls how much the model reasons before responding.
+- **`prompt_mode`**: System prompt handling. `replace` overrides the default Pi system prompt entirely with the agent's own instructions.
+- **`enabled`**: Set to `false` to disable an agent (useful for templates or unused agents)
+
+### Model Aliases (`:thinking` / `:nothinking`)
+
+Models configured with `filters.setParamsByID` in llama-swap support suffixed variants:
+
+- `model_id:thinking` — enables thinking mode with custom parameters (higher temperature, reasoning budget)
+- `model_id:nothinking` — disables thinking mode with standard parameters (low temperature)
+
+Models in this project that support `:thinking`/`:nothinking`:
+- `gemma31q4`
+- `gemma26`
+- `qwen36-a3b-q6`
+- `qwen36-27b-mtp-q3`
+
+When `scopeModels: true` is set in Pi's settings, agents can use these suffixed models directly (e.g., `model: "gemma31q4:thinking"`).
+
+### Routing Groups
+
+The llama-swap `routing` configuration defines model groups for load management:
+
+- **`swap`**: When `false`, all members stay loaded simultaneously. When `true`, only one member is loaded at a time (others are unloaded when switching).
+- **`exclusive`**: When `false`, requesting a member loads it without unloading others. When `true`, requesting a member unloads all others in the group.
+- **`members`**: List of model IDs belonging to the group.
+
+This project configures a `clever` group containing `qwen36-27b-mtp-q3` and `gemma26`, both kept loaded (`swap: false`, `exclusive: false`).
+
+### Llama-Swap Top-Level Settings
+
+- **`includeAliasesInList`**: When `true`, shows filter-generated aliases (e.g., `gemma31q4:thinking`) in the model list.
+- **`sendLoadingState`**: When `true`, injects loading status updates into the reasoning (thinking) stream, so the user sees progress while models load.
 
 ### `/agents` Command
 
@@ -99,17 +136,17 @@ Pi's `settings.json` (in `.pi/`) controls global defaults that taskflow flows in
   "concurrency": 8,
   "budget": { "maxUSD": 2.00 },
   "phases": [
-    { "id": "discover", "type": "agent", "agent": "scout",
+    { "id": "discover", "type": "agent", "agent": "explore",
       "task": "List all API endpoints. Output ONLY a JSON array.",
       "output": "json" },
     { "id": "audit", "type": "map", "over": "{steps.discover.json}",
-      "agent": "analyst",
+      "agent": "researcher",
       "task": "Audit {item.route} ({item.file}) for missing auth." },
     { "id": "review", "type": "gate", "dependsOn": ["audit"],
-      "agent": "reviewer",
+      "agent": "architect",
       "task": "Review findings. Remove false positives. VERDICT: PASS or BLOCK." },
     { "id": "report", "type": "reduce", "from": ["review"],
-      "dependsOn": ["review"], "agent": "doc-writer",
+      "dependsOn": ["review"], "agent": "researcher",
       "task": "Write a final report:\n{steps.review.output}",
       "final": true }
   ]

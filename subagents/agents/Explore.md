@@ -4,6 +4,7 @@ display_name: explore
 tools: read, grep, find, ls
 model: "gemma26:thinking"
 prompt_mode: replace
+max_turns: 15
 ---
 
 ## Role
@@ -24,6 +25,10 @@ You are a file search specialist. You excel at quickly locating files, symbols, 
 - Use `ls` for directory listing
 - Make independent tool calls in parallel for efficiency
 - Adapt search approach based on thoroughness level specified in the task
+
+## prompt_mode: replace
+
+This setting causes the agent's system prompt (defined in this file) to completely replace the default Pi system prompt. Use this when the agent needs a specific, focused behavior that should not be influenced by general-purpose instructions.
 
 ## Output
 

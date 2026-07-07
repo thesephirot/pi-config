@@ -2,7 +2,7 @@
 
 This project uses the `pi-taskflow` extension for workflow orchestration to implement a highly specialized, autonomous agentic workflow. To ensure quality and prevent "hallucinated" implementations, the system enforces a strict **Separation of Concerns**.
 
-## 🔄 The Agentic Workflow
+## The Agentic Workflow
 
 The standard pipeline for complex tasks follows this sequence:
 
@@ -16,47 +16,47 @@ The standard pipeline for complex tasks follows this sequence:
 
 ---
 
-## 🤖 Agent Registry
+## Agent Registry
 
-### 👑 orchestrator
+### orchestrator
 - **Role**: The Manager. Coordinates all other agents.
 - **Constraint**: **NEVER** performs tasks itself. It only delegates and verifies.
 - **When to use**: The primary entry point for all complex requests.
-- **Definition**: `subagents/agents/orchestrator.md`
+- **Definition**: `subagents/agents/Orchestrator.md`
 
-### 🔍 explore
+### explore
 - **Role**: The Scout. Fast, targeted search for symbols, files, and patterns.
 - **Constraint**: Read-only. No synthesis or deep analysis.
 - **When to use**: "Where is X defined?", "Find all files using Y."
-- **Definition**: `subagents/agents/explore.md`
+- **Definition**: `subagents/agents/Explore.md`
 
-### 📚 researcher
+### researcher
 - **Role**: The Librarian. Deep context gathering and synthesis.
 - **Constraint**: Read-only. Produces reports, not code.
 - **When to use**: "Explain how the authentication flow works," "Research the best way to integrate Z."
-- **Definition**: `subagents/agents/researcher.md`
+- **Definition**: `subagents/agents/Researcher.md`
 
-### 🏛️ architect
+### architect
 - **Role**: The Designer. High-level system design and trade-off analysis.
 - **Constraint**: Advisory only. **NEVER** writes or edits code.
 - **When to use**: "How should we restructure the API?", "What are the pros/cons of approach A vs B?"
-- **Definition**: `subagents/agents/architect.md`
+- **Definition**: `subagents/agents/Architect.md`
 
-### 📝 plan
+### plan
 - **Role**: The Strategist. Creates detailed, step-by-step implementation plans.
 - **Constraint**: Read-only. Must provide absolute paths and explicit steps.
 - **When to use**: "Create a plan to implement the feature designed by the architect."
-- **Definition**: `subagents/agents/plan.md`
+- **Definition**: `subagents/agents/Plan.md`
 
-### 🛠️ coder
+### coder
 - **Role**: The Builder. Pure implementation.
 - **Constraint**: **NEVER** plans or refactors beyond the provided plan. Requires a plan to start.
 - **When to use**: "Implement the changes specified in the plan."
-- **Definition**: `subagents/agents/coder.md`
+- **Definition**: `subagents/agents/Coder.md`
 
 ---
 
-## 🛠️ Guidelines for Interaction
+## Guidelines for Interaction
 
 ### For the user
 When prompting the system, be explicit about the desired outcome. The orchestrator will handle the delegation, but providing context helps:
@@ -70,7 +70,7 @@ When prompting the system, be explicit about the desired outcome. The orchestrat
 
 ---
 
-## ➕ Adding New Agents
+## Adding New Agents
 
 To add a new specialized agent:
 1. Create a new `.md` file in `subagents/agents/` — agent definitions are used by taskflow phases.

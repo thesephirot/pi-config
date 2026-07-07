@@ -11,6 +11,7 @@ A professional configuration setup for [Pi](https://pi.dev/), an AI-powered deve
 - [Installing Pi](#installing-pi)
 - [Pi Extensions](#pi-extensions)
 - [Taskflow Configuration](#taskflow-configuration)
+- [Documentation Standards](#documentation-standards)
 
 ---
 
@@ -48,8 +49,10 @@ Before setting up Pi, ensure you have [llama-swap](https://github.com/mostlygeek
    # ./llama-swap/config.yaml
     models:
       gemma31q4:
-        cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf --n-gpu-layers 999 --ctx-size 262144 --host 0.0.0.0  --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0
+        cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf --n-gpu-layers 999 --ctx-size 262144 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0
    ```
+
+   > **Note**: This example is simplified. The actual `config.yaml` in this project uses additional features: `filters` (for `:thinking`/`:nothinking` model aliases), `setParamsByID` (per-alias parameter overrides), `stripParams` (parameter stripping), `routing` groups, and speculative decoding (`--spec-type draft-mtp`). See [CONFIG.md](CONFIG.md) for full documentation.
 
 3. **Configure model groups** (optional):
 
@@ -129,11 +132,19 @@ Session-only. ctrl+s to save to settings.
 
   codestral-22b-q8 [llama-swap]
   gemma26 [llama-swap]
+  gemma26:thinking [llama-swap]
+  gemma26:nothinking [llama-swap]
   gemma31q4 [llama-swap]
+  gemma31q4:thinking [llama-swap]
+  gemma31q4:nothinking [llama-swap]
   ornith-1.0-9B [llama-swap]
   qwen36-a3b-q4 [llama-swap]
   qwen36-a3b-q6 [llama-swap]
+  qwen36-a3b-q6:thinking [llama-swap]
+  qwen36-a3b-q6:nothinking [llama-swap]
   qwen36-27b-mtp-q3 [llama-swap]
+  qwen36-27b-mtp-q3:thinking [llama-swap]
+  qwen36-27b-mtp-q3:nothinking [llama-swap]
   qwen-image-2512-Q4_K_M [llama-swap]
 ```
 
@@ -165,12 +176,12 @@ Directory structure:
 ```
 .pi/
 ├── agents/
-│   ├── orchestrator.md
-│   ├── explore.md
-│   ├── researcher.md
-│   ├── architect.md
-│   ├── plan.md
-│   ├── coder.md
+│   ├── Orchestrator.md
+│   ├── Explore.md
+│   ├── Researcher.md
+│   ├── Architect.md
+│   ├── Plan.md
+│   ├── Coder.md
 │   └── general-purpose.md
 └── taskflows/
     └── <saved-flows>
@@ -178,13 +189,9 @@ Directory structure:
 
 ### Agent Descriptions
 
-Put a description of every agent in its own markdown file. For example, the coder agent:
+Put a description of every agent in its own markdown file. Each file uses YAML frontmatter to define the agent's properties. See [CONFIG.md](CONFIG.md) for the full frontmatter reference.
 
-```markdown
-# Coder Agent
-
-The coder agent handles code implementation, file editing, and task execution.
-```
+> **Note**: The Researcher agent uses `web_search` and `tavily-search` tools, which require the `pi-web-access` extension to be installed.
 
 ### Configure Agents
 
@@ -207,11 +214,11 @@ Agent types
 • = project  ◦ = global  ✕ = disabled
 
 →    general-purpose  inherit
-  ✕• explore          inherit
+  ✕• explore          gemma26:thinking
   •  architect        qwen36-27b-mtp-q3:thinking
   •  plan             qwen36-27b-mtp-q3:thinking
   •  researcher       gemma26:thinking
-  •  coder            gemma31q4
+  •  coder            gemma31q4:thinking
   •  orchestrator     gemma26:thinking
 ```
 
@@ -244,6 +251,17 @@ hey, please review the readme and format it pretty. use a taskflow chain to dele
 ```
 
 This tests the orchestrator→coder delegation via taskflow. Success = the readme gets formatted by the coder agent through a taskflow chain. Use `/tf runs` to see active runs and `/tf peek <runId>` to inspect intermediate outputs.
+
+---
+
+## Documentation Standards
+
+This project follows documentation standards defined in [DOCUMENTATION_STANDARDS.md](DOCUMENTATION_STANDARDS.md). Key rules:
+
+- **No emojis in headings**
+- **PascalCase** for agent definition files, **kebab-case** for everything else
+- **Accuracy**: Documentation must always match the actual configuration
+- **Cross-references**: Link between docs instead of duplicating content
 
 ---
 
@@ -290,6 +308,24 @@ models:
   gemma31q4:
     cmd: llama-server --port 8080 --model /models/... --n-gpu-layers 999 --ctx-size 262144
 ```
+
+### Budget Exhaustion
+- Add a `budget` ceiling to the flow definition: `{ maxUSD: 1.50, maxTokens: 2000000 }`
+- On budget hit, remaining phases are skipped and the run ends as `blocked`
+- Use `/tf peek <runId>` to see partial outputs from completed phases
+- Increase the budget or reduce the scope (e.g., fewer map items) and resume
+
+### Phase Timeouts
+- Each phase has a `timeout` (ms) that caps execution time
+- On timeout the phase fails with a `timedOut` marker and is never auto-retried
+- Increase the timeout or set `optional: true` to prevent aborting the run
+- For map phases, consider reducing the input array size
+
+### Cache Invalidation
+- Cross-run cache reuse is enabled with `incremental: true` or `cache: "cross-run"`
+- To force a fresh run, clear the cache: `/tf cache-clear`
+- To see what changed and which phases need re-running: `/tf why-stale <runId> [phaseId]`
+- To re-run only affected phases: `/tf recompute <runId> <phaseId> --apply`
 
 ---
 

@@ -1,6 +1,6 @@
 # docker run -it --rm -p 8080:8080 --device /dev/dri:/dev/dri  -v /home/sephirot/.lmstudio/models/:/models  -v $(pwd)/config.yaml:/etc/llama-swap/config/config.yaml  ghcr.io/mostlygeek/llama-swap:unified-vulkan
 #shows aliases for the filter
-includeAliasesInList: true  
+includeAliasesInList: true
 
 # sendLoadingState: inject loading status updates into the reasoning (thinking)
 sendLoadingState: true
@@ -28,11 +28,11 @@ models:
           top_p: 0.95
           top_k: 64
           min_p: 0.1
-    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf -md /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma4-31B-it-assistant-Q4_K_M.gguf  --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --host 0.0.0.0  --temp 1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1  --jinja
+    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf -md /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma4-31B-it-assistant-Q4_K_M.gguf --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 --jinja
   # gemma31q6:
-  #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q6_K.gguf -md /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma4-31B-it-assistant-Q6_K_M.gguf --n-gpu-layers 999  --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --host 0.0.0.0  --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --presence_penalty 0.0 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 
+  #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q6_K.gguf -md /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma4-31B-it-assistant-Q6_K_M.gguf --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --presence_penalty 0.0 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1
   # gemma31q8:
-  #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q8_0.gguf -md /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma4-31B-it-assistant-Q8_0.gguf --n-gpu-layers 999  --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --host 0.0.0.0  --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --presence_penalty 0.0 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 
+  #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q8_0.gguf -md /models/lmstudio-community/gemma-4-31B-it-GGUF/gemma4-31B-it-assistant-Q8_0.gguf --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --presence_penalty 0.0 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1
   # gemma31qat:
   #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf --n-gpu-layers 999 --ctx-size 262144 --host 0.0.0.0 --temp 0.1 --parallel 1 --no-mmap -ngl 99 -ngld 99  --threads 16 --top-p 0.95 --top-k 64 --presence_penalty 0.0 --cache-type-k q8_0 --cache-type-v q8_0 --split-mode none --main-gpu 0 --flash-attn on
   gemma26:
@@ -57,8 +57,7 @@ models:
           top_p: 0.95
           top_k: 64
           min_p: 0.1
-    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf -md /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/mtp-gemma-4-26B-A4B-it.gguf  --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 131072 --host 0.0.0.0 --split-mode none --main-gpu 1 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 --jinja
-  
+    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf -md /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/mtp-gemma-4-26B-A4B-it.gguf --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 131072 --host 0.0.0.0 --split-mode none --main-gpu 1 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 8 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 --jinja
   # gemma12q5:
   #   cmd: llama-server --port ${PORT} --model /models/unsloth/gemma-4-12b-it-GGUF/gemma-4-12b-it-Q5_K_M.gguf --ctx-size 131072 --host 0.0.0.0 --temp 1.0 --top-p 0.95 --top-k 64
   codestral-22b-q8:
@@ -133,8 +132,8 @@ models:
           top_p: 0.9
           top_k: 20
           min_p: 0.1
-    cmd: llama-server --port ${PORT} --model /models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-Q3_K_S.gguf --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --n-gpu-layers 999 --host 0.0.0.0 --temp 1.0 --top-p 0.95  --min-p 0.0 --top-k 20 --split-mode none --main-gpu 0 --flash-attn on --jinja --reasoning-budget 1000 
-        
+    cmd: llama-server --port ${PORT} --model /models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-Q3_K_S.gguf --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --n-gpu-layers 999 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --min-p 0.0 --top-k 20 --split-mode none --main-gpu 0 --flash-attn on --jinja
+
   # qwen36-27b-base-q3:
   #   cmd: llama-server --port ${PORT} --model /models/unsloth/Qwen3.6-27B-GGUF/Qwen3.6-27B-Q3_K_S.gguf --n-gpu-layers 99 --ctx-size 131072 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64
   # qwen35-a3b-q4:
@@ -143,20 +142,20 @@ models:
   #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Qwen3.5-35B-A3B-GGUF/Qwen3.5-35B-A3B-Q6_K.gguf --n-gpu-layers 99 --ctx-size 131072 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64
   # qwen35-9b-q4:
   #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf --n-gpu-layers 99 --ctx-size 262144 --host 0.0.0.0  --temp 0.1 --top-p 0.95 --top-k 64 --split-mode none --main-gpu 1
-  ornith-1.0-9B: 
-    cmd: llama-server --port ${PORT} --model /models/deepreinforce-ai/Ornith-1.0-9B-GGUF/ornith-1.0-9b-Q6_K.gguf --n-gpu-layers 99 --ctx-size 262144 --host 0.0.0.0  --temp 0.6 --top-p 0.95 --top-k 20 --split-mode none --main-gpu 0
-  # deepsk-coder-v2-lite: 
+  ornith-1.0-9B:
+    cmd: llama-server --port ${PORT} --model /models/deepreinforce-ai/Ornith-1.0-9B-GGUF/ornith-1.0-9b-Q6_K.gguf --n-gpu-layers 99 --ctx-size 262144 --host 0.0.0.0 --temp 0.6 --top-p 0.95 --top-k 20 --split-mode none --main-gpu 0
+  # deepsk-coder-v2-lite:
   #   cmd: llama-server --port ${PORT} --model /models/lmstudio-community/DeepSeek-Coder-V2-Lite-Instruct-GGUF/DeepSeek-Coder-V2-Lite-Instruct-Q6_K.gguf --n-gpu-layers 99 --ctx-size 131072 --host 0.0.0.0  --temp 0.6 --top-p 0.95 --top-k 20 --split-mode none --main-gpu 0
   qwen-image-2512-Q4_K_M:
     checkEndpoint: "/"
-    #cmd: sd-server  --listen-port ${PORT} --diffusion-model /models/unsloth/Qwen-Image-2512-GGUF/qwen-image-2512-Q4_K_M.gguf --vae /models/unsloth/Qwen-Image-2512-GGUF/qwen_image_vae.safetensors --llm /models/unsloth/Qwen-Image-2512-GGUF/Qwen2.5-VL-7B-Instruct-UD-Q4_K_XL.gguf --diffusion-fa  --sampling-method euler 
-    # --cfg-scale 2.5 --sampling-method euler -v --steps 40 -H 1024 -W 1024 --diffusion-fa --flow-shift 3 
+    #cmd: sd-server --listen-port ${PORT} --diffusion-model /models/unsloth/Qwen-Image-2512-GGUF/qwen-image-2512-Q4_K_M.gguf --vae /models/unsloth/Qwen-Image-2512-GGUF/qwen_image_vae.safetensors --llm /models/unsloth/Qwen-Image-2512-GGUF/Qwen2.5-VL-7B-Instruct-UD-Q4_K_XL.gguf --diffusion-fa --sampling-method euler
+    # --cfg-scale 2.5 --sampling-method euler -v --steps 40 -H 1024 -W 1024 --diffusion-fa --flow-shift 3
     #cmd:  sd-server --listen-port ${PORT} --diffusion-model /models/unsloth/Qwen-Image-2512-GGUF/qwen-image-2512-Q4_K_M.gguf --diffusion-model /models/unsloth/Qwen-Image-2512-GGUF/qwen-image-2512-Q4_K_M.gguf   --vae /models/unsloth/Qwen-Image-2512-GGUF/qwen_image_vae.safetensors --llm /models/unsloth/Qwen-Image-2512-GGUF/Qwen2.5-VL-7B-Instruct-UD-Q4_K_XL.gguf --cfg-scale 2.5 --sampling-method euler --steps 40 --height 1024 --width 1024 --diffusion-fa --flow-shift 3 -v
-    cmd:  sd-server --listen-port ${PORT}  --diffusion-model /models/unsloth/Qwen-Image-2512-GGUF/qwen-image-edit-2511-Q4_K_M.gguf --vae /models/unsloth/Qwen-Image-2512-GGUF/qwen_image_vae.safetensors --llm /models/unsloth/Qwen-Image-2512-GGUF/Qwen2.5-VL-7B-Instruct-UD-Q4_K_XL.gguf --cfg-scale 2.5 --sampling-method euler --steps 40 --height 1024 --width 1024 --diffusion-fa --flow-shift 3 -v
+    cmd: sd-server --listen-port ${PORT} --diffusion-model /models/unsloth/Qwen-Image-2512-GGUF/qwen-image-edit-2511-Q4_K_M.gguf --vae /models/unsloth/Qwen-Image-2512-GGUF/qwen_image_vae.safetensors --llm /models/unsloth/Qwen-Image-2512-GGUF/Qwen2.5-VL-7B-Instruct-UD-Q4_K_XL.gguf --cfg-scale 2.5 --sampling-method euler --steps 40 --height 1024 --width 1024 --diffusion-fa --flow-shift 3 -v
 routing:
   router:
     settings:
-      groups: 
+      groups:
         "clever":
           # swap: false lets all members stay loaded at once
           swap: false
