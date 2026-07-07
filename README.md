@@ -10,7 +10,7 @@ A professional configuration setup for [Pi](https://pi.dev/), an AI-powered deve
 - [Prerequisites: Llama-Swap](#prerequisites-llama-swap)
 - [Installing Pi](#installing-pi)
 - [Pi Extensions](#pi-extensions)
-- [Subagents Configuration](#subagents-configuration)
+- [Taskflow Configuration](#taskflow-configuration)
 
 ---
 
@@ -23,7 +23,7 @@ Pi is an AI-powered development environment that enables you to work with multip
 - **Dynamic Model Loading**: Models are loaded on-demand using llama-swap
 - **Hot-Swapping**: Seamlessly switch between different models without restarting
 - **Multi-Model Support**: Configure and use multiple models simultaneously
-- **Subagent System**: Customize your development environment with specialized agents
+- **Taskflow Orchestration**: Declarative multi-phase workflows (chains, DAGs, fan-out) via pi-taskflow
 
 ---
 
@@ -93,10 +93,10 @@ For more information, visit the [Pi documentation](https://pi.dev/).
 
 ## Pi Extensions
 
-Install the necessary Pi extensions to enable subagents and coding capabilities:
+Install the necessary Pi extensions for taskflow, web access, coding capabilities, and llama-swap integration:
 
 ```bash
-pi install npm:@tintinweb/pi-subagents
+pi install npm:pi-taskflow
 pi install npm:pi-web-access
 pi install npm:@earendil-works/pi-coding-agent
 pi install npm:@danielmeneses/pi-llama-swap
@@ -148,17 +148,17 @@ Choose the actual model you want to use:
 
 ---
 
-## Subagents Configuration
+## Taskflow Configuration
 
-Configure your local `.pi` directory with subagent definitions.
+The `pi-taskflow` extension enables declarative, multi-phase workflow orchestration. Agent definitions (`.md` files) still live in `.pi/agents/`, but the orchestration layer is taskflow — not the old `@tintinweb/pi-subagents` framework.
 
-### Setup Subagents
+### Setup Agents
 
-Copy the subagent configuration to your `.pi` directory:
+Copy the agent definitions to your `.pi` directory:
 
 ```bash
 mkdir -p .pi
-cp -r ./pi-subagents/* .pi
+cp -r ./pi-subagents/agents/* .pi/agents/
 ```
 
 Directory structure:
@@ -173,7 +173,8 @@ Directory structure:
 │   ├── plan.md
 │   ├── coder.md
 │   └── general-purpose.md
-└── subagents.json
+└── taskflows/
+    └── <saved-flows>
 ```
 
 ### Agent Descriptions
@@ -186,9 +187,9 @@ Put a description of every agent in its own markdown file. For example, the code
 The coder agent handles code implementation, file editing, and task execution.
 ```
 
-### Configure Subagents
+### Configure Agents
 
-Reload Pi or restart it, then configure your subagents:
+Reload Pi or restart it, then configure your agents:
 
 ```bash
 /agents
@@ -215,15 +216,35 @@ Agent types
   •  orchestrator     gemma26:thinking
 ```
 
-### Test Your Configuration
+### Running Taskflows
 
-Test the subagent system:
+Taskflow supports several workflow patterns:
+
+- **Chain**: Sequential steps where each consumes the previous output
+- **Parallel**: Multiple independent tasks run concurrently
+- **DAG**: Full directed acyclic graph with `dependsOn` declarations
+- **Map**: Fan-out over a dynamic list (e.g., audit every file)
+- **Gate**: Quality/review step that can halt the workflow
+- **Reduce**: Aggregate results from multiple phases
+
+Manage saved flows:
 
 ```bash
-hey, please review the readme and format it pretty. use coder to do the actual work.
+/tf list          # list saved flows
+/tf run <name>    # run a saved flow
+/tf verify        # static-check a flow definition (zero tokens)
+/tf peek <runId>  # inspect intermediate phase outputs
 ```
 
-This tests the orchestrator→coder delegation chain. Success = the readme gets formatted by the coder agent (not done directly by Pi). Check the fleet view (`/agents`) to confirm the orchestrator spawned the coder.
+### Test Your Configuration
+
+Test the taskflow system:
+
+```bash
+hey, please review the readme and format it pretty. use a taskflow chain to delegate the work.
+```
+
+This tests the orchestrator→coder delegation via taskflow. Success = the readme gets formatted by the coder agent through a taskflow chain. Use `/tf runs` to see active runs and `/tf peek <runId>` to inspect intermediate outputs.
 
 ---
 
@@ -238,7 +259,6 @@ This tests the orchestrator→coder delegation chain. Success = the readme gets 
 ### Agent Not Spawning
 - Verify the agent `.md` file exists in `.pi/agents/` and has valid YAML frontmatter
 - Check `/agents` output — disabled agents show as `✕` and won't be selected
-- Ensure `scopeModels` is set correctly in `subagents.json` (see [CONFIG.md](./CONFIG.md))
 - If the agent specifies a model that doesn't exist in llama-swap, spawning will fail
 
 ### Model Loading Errors
@@ -247,11 +267,20 @@ This tests the orchestrator→coder delegation chain. Success = the readme gets 
 - For Vulkan: ensure `/dev/dri` device is accessible inside the container
 - For CUDA: ensure the correct NVIDIA drivers are installed on the host
 
-### Subagent Workflow Hangs
-- Check `graceTurns` setting in `subagents.json` — if too low, agents get terminated before finishing
-- Check `maxConcurrent` — if set to `1`, parallel tasks queue up sequentially
-- Use `/agents` to see if subagents are stuck in `in_progress` state
-- Increase `defaultMaxTurns` if agents are running out of turns before completing their work
+### Flow Won't Run
+- Verify the flow definition with `/tf verify` (zero tokens) before running — catches cycles, missing `dependsOn`, and undefined references
+- Ensure every `{steps.X.output}` reference has a matching `dependsOn: ["X"]` declaration
+- Check that phase `id` values use hyphens (not underscores) and agent names match available agents
+
+### Map Phase Produces Bad Output
+- Ensure the upstream phase emits a valid JSON array and sets `output: "json"`
+- Pin the JSON shape with an `expect` contract on the upstream phase
+- Add `retry` to the upstream phase so malformed output triggers a retry
+
+### Gate Blocks Unexpectedly
+- Check that the gate task ends with a clear `VERDICT: PASS` or `VERDICT: BLOCK` instruction
+- Review `eval` conditions — parse errors fail open (treated as PASS)
+- For scoring gates, verify `threshold` and `combine` settings
 
 ### `${PORT}` Variable
 
@@ -274,7 +303,11 @@ models:
 | `pi` | Start Pi |
 | `/scoped-models` | List available models |
 | `/model` | Select active model |
-| `/agents` | Configure subagents |
+| `/agents` | Configure agents |
+| `/tf list` | List saved taskflow definitions |
+| `/tf run <name>` | Run a saved taskflow |
+| `/tf verify` | Static-check a flow definition |
+| `/tf peek <runId>` | Inspect intermediate phase outputs |
 | `pi install npm:<package>` | Install a Pi extension |
 
 ### Architecture Notes

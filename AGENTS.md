@@ -1,6 +1,6 @@
 # Agent Registry & Workflow
 
-This project utilizes the `@tintinweb/pi-subagents` framework to implement a highly specialized, autonomous agentic workflow. To ensure quality and prevent "hallucinated" implementations, the system enforces a strict **Separation of Concerns**.
+This project uses the `pi-taskflow` extension for workflow orchestration to implement a highly specialized, autonomous agentic workflow. To ensure quality and prevent "hallucinated" implementations, the system enforces a strict **Separation of Concerns**.
 
 ## 🔄 The Agentic Workflow
 
@@ -64,16 +64,17 @@ When prompting the system, be explicit about the desired outcome. The orchestrat
 - **Good**: "There is a bug in the login flow where the token isn't refreshing. Please have the researcher investigate, the architect propose a fix, and the coder implement it."
 
 ### For the orchestrator
-- Always follow the **Launch Protocol**: `TaskUpdate` $\rightarrow$ `TaskExecute` $\rightarrow$ `get_subagent_result`.
+- Always use taskflow for delegation — prefer chain or DAG patterns over ad-hoc subagent calls.
 - Never attempt "quick fixes" between agent steps.
-- If a coder fails, do not fix it yourself; spawn a researcher or architect to diagnose the failure.
+- If a coder fails, do not fix it yourself; use taskflow to spawn a researcher or architect to diagnose the failure.
 
 ---
 
 ## ➕ Adding New Agents
 
 To add a new specialized agent:
-1. Create a new `.md` file in `pi-subagents/agents/`.
+1. Create a new `.md` file in `pi-subagents/agents/` — agent definitions are used by taskflow phases, not the subagents runtime.
 2. Include a YAML frontmatter with `description`, `tools`, and `model`.
 3. Define strict **Role & Constraints** to prevent overlap with existing agents.
 4. Update this `AGENTS.md` file to include the new role in the registry.
+5. Reference the agent by name in taskflow phases (e.g., `"agent": "my-new-agent"`).

@@ -1,86 +1,117 @@
-# Subagents Configuration Reference
+# Configuration Reference
 
-This document explains the settings in `subagents.json`, which controls how Pi manages its subagent fleet.
+This document explains the settings for agent configuration and taskflow orchestration.
 
-## Settings Reference
+## Agent Configuration
 
-### `maxConcurrent` — Maximum Parallel Subagents
-- **Default**: `2`
-- Controls how many subagents can run simultaneously. Higher values speed up parallel work (e.g., auditing multiple files at once) but consume more memory and context window. Lower values are safer for limited GPU resources.
+Agent definitions live as `.md` files in `.pi/agents/` with YAML frontmatter. The `/agents` command configures which agents are active and which models they use.
 
-### `defaultMaxTurns` — Default Conversation Length
-- **Default**: `0` (unlimited)
-- Maximum number of tool-call rounds a subagent can make before being forced to conclude. Set to `0` to allow unlimited turns, or a positive integer to cap execution time. Individual agents can override this in their `.md` frontmatter (e.g., `max_turns: 30`).
+### Agent Frontmatter
 
-### `graceTurns` — Grace Period Before Forced Completion
-- **Default**: `5`
-- After a subagent reaches its turn limit, it gets this many additional "grace" turns to finish its work and produce output. Prevents abrupt termination mid-task.
+Each agent `.md` file includes:
 
-### `defaultJoinMode` — Result Merge Strategy
-- **Default**: `"smart"`
-- Controls how results from parallel subagents are combined:
-  - `"smart"` — automatically picks the best merge strategy based on output type
-  - `"concat"` — simple concatenation of all outputs
-  - `"last"` — uses only the last agent's output
-- Affects `taskflow` parallel phases and ad-hoc parallel subagent spawns.
+```yaml
+---
+description: "A brief description of what this agent does"
+model: "gemma31q4"
+tools: ["read", "edit", "bash"]
+max_turns: 30
+---
+```
 
-### `schedulingEnabled` — Agent Execution Scheduler
-- **Default**: `true`
-- When enabled, Pi schedules subagent execution based on priority, resource availability, and dependencies. Disable only if you want purely FIFO execution.
+- **`description`**: How Pi identifies when to select this agent
+- **`model`**: The model this agent should use (requires `scopeModels: true` in settings)
+- **`tools`**: Which tools this agent can access
+- **`max_turns`**: Maximum tool-call rounds before forced conclusion
 
-### `scopeModels` — Per-Agent Model Scoping
-- **Default**: `false`
-- When `true`, each agent uses the model specified in its `.md` frontmatter (`model:` field). When `false`, all agents inherit the host session's active model. Enable this to give different agents different models (e.g., a cheap model for search, a strong model for architecture).
+### `/agents` Command
 
-### `toolDescriptionMode` — Tool Documentation Verbosity
-- **Default**: `"full"`
-- Controls how much detail about available tools is included in the agent's system prompt:
-  - `"full"` — complete tool descriptions with all parameters
-  - `"compact"` — tool name and one-line summary
-  - `"name-only"` — just the tool names (saves tokens, risks misuse)
-- Use `"compact"` or `"name-only"` to reduce context usage for agents that only need a few tools.
+```bash
+/agents
+```
 
-### `fleetView` — Subagent Fleet Dashboard
-- **Default**: `true`
-- When enabled, shows a real-time dashboard of all running subagents in the Pi TUI (`/agents` command). Disable to reduce UI overhead.
+Configure agent scope:
+- **Project**: Local to your current project (`•`)
+- **Global**: Available across all projects (`◦`)
+- **Disabled**: Turned off (`✕`)
 
-### `widgetMode` — Dashboard Display Style
-- **Default**: `"background"`
-- Controls how the subagent fleet status is displayed:
-  - `"background"` — minimal status bar (doesn't block main view)
-  - `"inline"` — embedded in the conversation stream
-  - `"popup"` — separate panel that can be toggled
+## Taskflow Configuration
 
-## Example Configurations
+Taskflow (`pi-taskflow`) is the workflow orchestration layer. It replaces the old `subagents.json` configuration.
 
-### Resource-Constrained (Small GPU)
+### Flow-Level Settings
+
+Set these at the top level of a taskflow definition:
+
+- **`concurrency`**: Maximum parallel phases (default: inherited from settings)
+- **`budget`**: Cost/tokens caps (`{ maxUSD: 1.50, maxTokens: 2000000 }`)
+- **`agentScope`**: Where agents are discovered (`"user"` | `"project"` | `"both"`)
+- **`strictInterpolation`**: Fail on unresolved placeholders instead of silent empty strings
+
+### Per-Phase Settings
+
+- **`retry`**: Auto-retry on failure (`{ max: 3, backoffMs: 1000, factor: 2 }`)
+- **`timeout`**: Max ms per phase (>= 1000)
+- **`expect`**: JSON output contract — validates output shape, retryable on violation
+- **`optional`**: Fail-soft — downstream sees empty output instead of aborting the run
+- **`cache`**: Reuse policy (`"run-only"` | `"cross-run"` | `"off"`)
+- **`when`**: Conditional guard — skip phase unless expression is truthy
+- **`join`**: `"all"` (default) or `"any"` — wait for all deps or just one
+
+### Cross-Run Caching
+
+Enable `incremental: true` on a flow or `cache: "cross-run"` on phases to reuse results across runs. Changes to source files only re-run affected phases.
+
+```
+/tf ir <name>      # show phase fingerprints
+/tf why-stale <runId> [phaseId]  # find which phases changed
+/tf recompute <runId> <phaseId>  # re-run only affected phases
+```
+
+### Settings File
+
+Pi's `settings.json` (in `.pi/`) controls global defaults that taskflow flows inherit:
+
+- **`scopeModels`**: When `true`, agents use their own model from `.md` frontmatter instead of inheriting the host session's model
+- **`toolDescriptionMode`**: Tool documentation verbosity (`"full"` | `"compact"` | `"name-only"`)
+- **`modelRoles`**: Default model assignments for taskflow agents (executor, scout, planner, etc.)
+
+### Example Taskflow Definitions
+
+#### Simple Chain
 ```json
 {
-  "maxConcurrent": 1,
-  "defaultMaxTurns": 20,
-  "graceTurns": 3,
-  "defaultJoinMode": "smart",
-  "schedulingEnabled": true,
-  "scopeModels": false,
-  "disableDefaultAgents": false,
-  "toolDescriptionMode": "compact",
-  "fleetView": true,
-  "widgetMode": "background"
+  "name": "review-and-fix",
+  "phases": [
+    { "id": "review", "type": "agent", "agent": "researcher",
+      "task": "Review the codebase for issues." },
+    { "id": "fix", "type": "agent", "agent": "coder",
+      "dependsOn": ["review"],
+      "task": "Fix the issues identified:\n{steps.review.output}" }
+  ]
 }
 ```
 
-### Performance-Oriented (Large GPU, Multi-Model)
+#### Production Audit (Fan-Out + Gate + Reduce)
 ```json
 {
-  "maxConcurrent": 4,
-  "defaultMaxTurns": 0,
-  "graceTurns": 5,
-  "defaultJoinMode": "smart",
-  "schedulingEnabled": true,
-  "scopeModels": true,
-  "disableDefaultAgents": false,
-  "toolDescriptionMode": "full",
-  "fleetView": true,
-  "widgetMode": "inline"
+  "name": "audit-endpoints",
+  "concurrency": 8,
+  "budget": { "maxUSD": 2.00 },
+  "phases": [
+    { "id": "discover", "type": "agent", "agent": "scout",
+      "task": "List all API endpoints. Output ONLY a JSON array.",
+      "output": "json" },
+    { "id": "audit", "type": "map", "over": "{steps.discover.json}",
+      "agent": "analyst",
+      "task": "Audit {item.route} ({item.file}) for missing auth." },
+    { "id": "review", "type": "gate", "dependsOn": ["audit"],
+      "agent": "reviewer",
+      "task": "Review findings. Remove false positives. VERDICT: PASS or BLOCK." },
+    { "id": "report", "type": "reduce", "from": ["review"],
+      "dependsOn": ["review"], "agent": "doc-writer",
+      "task": "Write a final report:\n{steps.review.output}",
+      "final": true }
+  ]
 }
 ```
