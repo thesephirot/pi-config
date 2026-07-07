@@ -1,0 +1,47 @@
+schemaVersion: "1"
+kind: sandbox
+name: llama-swap
+displayName: "Llama-Swap Model Server"
+description: "llama-swap model server with Vulkan GPU support — models and config injected at startup"
+
+sandbox:
+  image: ghcr.io/mostlygeek/llama-swap:unified-vulkan
+  entrypoint:
+    run: ["/bin/sh", "-c"]
+  aiFilename: "LLAMA_SWAP.md"
+
+commands:
+  install:
+    - user: "0"
+      command: |
+        apt-get update && apt-get install -y --no-install-recommends curl
+        mkdir -p /config
+        mkdir -p /models
+
+  startup:
+    - user: "0"
+      command:
+        - sh
+        - -c
+        - |
+          # Inject models path and config.yaml as startup parameters
+          # Models are mounted from the host at runtime
+          echo "=== Llama-Swap Sandbox Starting ==="
+          echo "GPU: Vulkan (/dev/dri)"
+          echo "Models path: /models"
+          echo "Config path: /config/config.yaml"
+          echo "Port: 8080"
+          echo "==============================="
+          ls -la /models/ 2>/dev/null || echo "Models dir empty — mount -v host/models:/models at runtime"
+          ls -la /config/ 2>/dev/null || echo "Config dir empty — mount -v host/config.yaml:/config/config.yaml at runtime"
+          exec llama-swap --config /config/config.yaml
+
+environment:
+  variables:
+    PORT: "8080"
+    MODEL_DIR: "/models"
+
+caps:
+  network:
+    allow:
+      - "*"
