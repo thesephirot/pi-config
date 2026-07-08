@@ -48,10 +48,10 @@ models:
           top_p: 0.95
           top_k: 64
           min_p: 0.1
-    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf -md /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/mtp-gemma-4-26B-A4B-it.gguf --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 131072 --host 0.0.0.0 --split-mode none --main-gpu 1 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 16 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 --jinja
+    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf -md /models/lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/mtp-gemma-4-26B-A4B-it.gguf --n-gpu-layers 999 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 131072 --host 0.0.0.0 --split-mode none --main-gpu 0 --flash-attn on --no-mmap -ngl 99 -ngld 99 --threads 16 --cache-type-k q4_0 --cache-type-v q4_0 --no-mmproj --parallel 1 --jinja
 
   codestral-22b-q8:
-    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Codestral-22B-v0.1-GGUF/Codestral-22B-v0.1-Q8_0.gguf --n-gpu-layers 99 --ctx-size 16384 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --main-gpu 0 --threads 12
+    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Codestral-22B-v0.1-GGUF/Codestral-22B-v0.1-Q8_0.gguf --n-gpu-layers 99 --ctx-size 16384 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --main-gpu 0 --threads 16 --flash-attn on --no-mmap --split-mode none
   qwen36-a3b-q6:
     filters:
       stripParams: "temperature, top_p, top_k, min_p, presence_penalty, repeat_penalty"
@@ -75,7 +75,7 @@ models:
           top_p: 0.95
           top_k: 20
           min_p: 0.1
-    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q6_K.gguf --n-gpu-layers 99 --ctx-size 131072 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --main-gpu 1 --threads 16 --jinja
+    cmd: llama-server --port ${PORT} --model /models/lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q6_K.gguf --n-gpu-layers 99 --ctx-size 131072 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --top-k 64 --main-gpu 0 --threads 16 --flash-attn on --no-mmap --split-mode none --jinja
 
   qwen36-27b-mtp-q3:
     filters:
@@ -100,10 +100,10 @@ models:
           top_p: 0.9
           top_k: 20
           min_p: 0.1
-    cmd: llama-server --port ${PORT} --model /models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-Q3_K_S.gguf --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --n-gpu-layers 999 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --min-p 0.0 --top-k 20 --split-mode none --main-gpu 0 --flash-attn on --threads 16 --jinja
+    cmd: llama-server --port ${PORT} --model /models/unsloth/Qwen3.6-27B-MTP-GGUF/Qwen3.6-27B-Q3_K_S.gguf --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-n-min 1 --ctx-size 262144 --n-gpu-layers 999 --host 0.0.0.0 --temp 0.1 --top-p 0.95 --min-p 0.0 --top-k 20 --split-mode none --main-gpu 0 --flash-attn on --no-mmap --threads 16 --jinja
 
   ornith-1.0-9B:
-    cmd: llama-server --port ${PORT} --model /models/deepreinforce-ai/Ornith-1.0-9B-GGUF/ornith-1.0-9b-Q6_K.gguf --n-gpu-layers 99 --ctx-size 262144 --host 0.0.0.0 --temp 0.6 --top-p 0.95 --top-k 20 --split-mode none --main-gpu 1 --threads 8
+    cmd: llama-server --port ${PORT} --model /models/deepreinforce-ai/Ornith-1.0-9B-GGUF/ornith-1.0-9b-Q6_K.gguf --n-gpu-layers 99 --ctx-size 262144 --host 0.0.0.0 --temp 0.6 --top-p 0.95 --top-k 20 --split-mode none --main-gpu 1 --threads 8 --flash-attn on --no-mmap
 
   qwen-image-2512-Q4_K_M:
     checkEndpoint: "/"
@@ -124,10 +124,14 @@ matrix:
     ornith1: ornith-1.0-9B
     qwimage: qwen-image-2512-Q4_K_M
 
-  # evict_costs: relative cost of losing a running model (default: 1)
-  # evict_costs:
-  #   v: 50 # vllm backend, slow cold start
-  #   L: 30 # 70B weights, slow to load
+  evict_costs:
+    gemma31: 40   # 31B Q4, slow cold start
+    qw36a3b: 40   # 35B Q6, slow cold start
+    gemma26: 30   # 26B Q4, moderate cold start
+    codest: 25    # 22B Q8, moderate cold start
+    qw3627b: 20   # 27B Q3, faster cold start
+    ornith1: 10   # 9B Q6, fast cold start
+    qwimage: 50   # sd-server, very slow cold start
 
   # sets: named sets of concurrent model combinations
   # Values are DSL strings with operators:
@@ -144,21 +148,20 @@ matrix:
   #   "(a | b) & (c | d)"  → [a,c], [a,d], [b,c], [b,d]
   #   "+llms & v"          → expands llms inline, then applies & v
   sets:
-    # LLM + TTS: switching between g/q/m won't evict v
-    # expands to: [g,v], [q,v], [m,v]
-    #  standard: "(g | q | m) & v"
-    standardgemma: "(gemma26 & gemma31) | (gemma26 & qw36a3b) | (gemma26 & qw3627b)"
+    # GPU 0 (48 GB) - large models, solo only (no pair fits)
+    standard: "gemma31 | gemma26 | qw36a3b | qw3627b | codest"
 
-    # LLM + TTS + reranker
-    # expands to: [g,v,e], [q,v,e]
-    standardornith: "(ornith1 & gemma31) | (ornith1 & qw36a3b) | (ornith1 & qw3627b)"
+    # GPU 1 (16 GB) - only ornith
+    ornith: "ornith1"
 
-    # LLM + image generation, no TTS
-    # expands to: [g,sd], [q,sd]
+    # cross-GPU: ornith on GPU 1 paired with any GPU 0 model
+    # expands to: [ornith1,gemma31], [ornith1,gemma26], [ornith1,qw36a3b], [ornith1,qw3627b]
+    standardornith: "ornith1 & (gemma31 | gemma26 | qw36a3b | qw3627b)"
+
+    # code model alone on GPU 0
     code: "codest"
 
-    # 70B model uses all GPUs, can only run alone
-    # expands to: [L]
+    # image generation (sd-server uses both GPUs)
     picture: "qwimage"
 
 
