@@ -7,7 +7,7 @@ description: "Pi coding agent with llama-swap, taskflow, and web-access extensio
 sandbox:
   image: docker/sandbox-templates:shell
   entrypoint:
-    run: ["pi"]
+    run: ["bash"]
   aiFilename: "PI.md"
 
 commands:
@@ -23,6 +23,7 @@ commands:
         npm install -g --ignore-scripts @earendil-works/pi-coding-agent && \
         pi install npm:pi-taskflow && \
         pi install npm:pi-web-access
+        pi install npm:@danielmeneses/pi-llama-swap
 
   startup:
     - user: "1000"
@@ -35,20 +36,9 @@ commands:
           echo "Extensions: taskflow, web-access, pi-llama-swap"
           echo "==========================="
 
-          # Clone pi-llama-swap extension
-          if [ ! -d "$HOME/.pi/agent/extensions/pi-llama-swap" ]; then
-            git clone --depth 1 https://github.com/danielmeneses/pi-llama-swap.git \
-              "$HOME/.pi/agent/extensions/pi-llama-swap"
-            cd "$HOME/.pi/agent/extensions/pi-llama-swap" && \
-            npm install --ignore-scripts
-            echo "pi-llama-swap extension installed."
-          else
-            echo "pi-llama-swap extension already present."
-          fi
-
 environment:
   variables:
-    LLAMA_SWAP_URL: "http://127.0.0.1:8080"
+    LLAMA_SWAP_URL: "http://192.168.68.67"
     LLAMA_SWAP_PORT: "8080"
 
 caps:
@@ -62,6 +52,8 @@ caps:
       - "10.*"
       - "192.168.*"
       - "172.16.*"
+      - "192.168.68.67:8080"
+      - "pi.dev"
 
 agentContext: |
   This sandbox runs the Pi coding agent with the following extensions:
