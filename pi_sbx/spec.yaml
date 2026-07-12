@@ -7,8 +7,8 @@ description: "Pi coding agent with llama-swap, taskflow, and web-access extensio
 sandbox:
   image: docker/sandbox-templates:shell
   entrypoint:
-    run: ["bash"]
-  aiFilename: "PI.md"
+    run: [pi]
+  aiFilename: "AGENTS.md"
 
 commands:
   install:
@@ -20,28 +20,21 @@ commands:
 
     - user: "1000"
       command: |
-        npm install -g --ignore-scripts @earendil-works/pi-coding-agent && \
-        pi install npm:pi-taskflow && \
-        pi install npm:pi-web-access
-        pi install npm:@danielmeneses/pi-llama-swap
+        npm install -g --ignore-scripts @earendil-works/pi-coding-agent 
+        pi install npm:pi-taskflow 
+        pi install npm:pi-web-access 
+        pi install npm:@danielmeneses/pi-llama-swap 
+        pi install npm:@firstpick/pi-package-webui 
+        pi install npm:@firstpick/pi-package-remote-webui
 
-  startup:
-    - user: "1000"
-      command:
-        - sh
-        - -c
-        - |
-          echo "=== Pi Sandbox Starting ==="
-          echo "Llama-Swap: http://127.0.0.1:8080"
-          echo "Extensions: taskflow, web-access, pi-llama-swap"
-          echo "==========================="
-
-
+# use 
+# sbx ports pi-sandbox --publish 0.0.0.0:31415:31415 
+# to publish the port to the local network for remote control of the sandbox
 environment:
   variables:
     LLAMA_SWAP_URL: "http://192.168.68.67"
     LLAMA_SWAP_PORT: "8080"
-
+    #HTTP_PROXY: "http://172.17.0.1"
 caps:
   network:
     allow:
@@ -61,6 +54,7 @@ agentContext: |
   - **pi-taskflow**: Orchestrator engine for multi-phase agent workflows
   - **pi-web-access**: Web search, URL fetching, GitHub, and video analysis
   - **pi-llama-swap**: Dynamic model discovery and switching via llama-swap at http://127.0.0.1:8080
-
+  -  **To expose the Web UI to your LAN use:                                                                                                                                                                                                                                                                                                                        
+     sbx ports pi-sandbox --publish 0.0.0.0:31415:31415                 
   The llama-swap sandbox provides local model switching.
   Models are served on port 8080. Use /llama-swap-set-context-length to override context windows.
