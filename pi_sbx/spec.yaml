@@ -7,7 +7,7 @@ description: "Pi coding agent with llama-swap, taskflow, and web-access extensio
 sandbox:
   image: docker/sandbox-templates:shell
   entrypoint:
-    run: [pi]
+    run: [herdr]
   aiFilename: "AGENTS.md"
 
 commands:
@@ -20,6 +20,7 @@ commands:
 
     - user: "1000"
       command: |
+        curl -fsSL https://herdr.dev/install.sh | sh
         npm install -g --ignore-scripts @earendil-works/pi-coding-agent 
         pi install npm:pi-taskflow 
         pi install npm:pi-web-access 
@@ -48,3 +49,4 @@ caps:
       - "172.16.*"
       - "192.168.68.67:8080"
       - "pi.dev"
+      - "herdr.dev"
