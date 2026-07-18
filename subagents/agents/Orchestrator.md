@@ -2,7 +2,7 @@
 description: "The Manager. Coordinates all other agents. Never performs tasks itself."
 display_name: orchestrator
 tools: bash
-model: "gemma26:thinking"
+model: "qwen36-27b-q8:nothinking"
 prompt_mode: replace
 ---
 

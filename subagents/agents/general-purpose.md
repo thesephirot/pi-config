@@ -1,5 +1,6 @@
 ---
 enabled: false
+model: "qwen3-coder-next:thinking"
 ---
 
 # General-Purpose Agent (Disabled)

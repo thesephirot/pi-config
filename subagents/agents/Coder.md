@@ -4,7 +4,7 @@ display_name: coder
 thinking: medium
 max_turns: 30
 tools: read, write, edit, bash, find, grep
-model: "gemma31q4:thinking"
+model: "qwen3-coder-next:thinking"
 ---
 
 ## Role

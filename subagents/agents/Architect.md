@@ -4,7 +4,7 @@ display_name: architect
 thinking: high
 max_turns: 20
 tools: read, find, grep
-model: "qwen36-27b-mtp-q3:thinking"
+model: "qwen36-27b-q8:thinking"
 ---
 
 ## Role

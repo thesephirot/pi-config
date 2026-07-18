@@ -3,7 +3,7 @@ description: "Creates detailed, step-by-step implementation plans based on archi
 display_name: plan
 tools: read, bash, grep, find, ls
 prompt_mode: replace
-model: "qwen36-27b-mtp-q3:thinking"
+model: "qwen36-27b-q8:thinking"
 max_turns: 20
 ---
 

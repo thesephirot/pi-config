@@ -37,12 +37,12 @@ Defined in `.pi/agent/settings.json` — edit to tune which model each agent cla
 
 | Role | Purpose | Default Model |
 |---|---|---|
-| `fast` | Low-latency tasks (recon, quick edits, verification) | `llama-swap/gemma26:nothinking` |
-| `strong` | Complex reasoning (planning, general review) | `llama-swap/qwen36-a3b-q6:thinking` |
-| `thinker` | Deep analysis (requirements, adversarial challenge) | `llama-swap/qwen36-27b-mtp-q3:thinking` |
-| `arbiter` | Decision-making, conflict resolution | `llama-swap/gemma31q4:thinking` |
-| `vision` | Image and design analysis (UI tasks) | `qwen-image-2512-Q4_K_M` |
-| `reasoner` | Security and risk analysis | `llama-swap/qwen36-27b-mtp-q3:thinking` |
+| `fast` | Low-latency tasks (recon, quick edits, verification) | `llama-swap/qwen3-coder-next:nothinking` |
+| `strong` | Complex reasoning (planning, general review) | `llama-swap/qwen3-coder-next:thinking` |
+| `thinker` | Deep analysis (requirements, adversarial challenge) | `llama-swap/qwen36-27b-q8:thinking` |
+| `arbiter` | Decision-making, conflict resolution | `llama-swap/qwen36-27b-q8:thinking` |
+| `vision` | Image and design analysis (UI tasks) | `llama-swap/qwen3-coder-next:thinking` |
+| `reasoner` | Security and risk analysis | `llama-swap/qwen36-27b-q8:thinking` |
 
 ## Guidelines
 

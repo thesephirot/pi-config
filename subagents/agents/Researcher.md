@@ -4,7 +4,7 @@ display_name: researcher
 thinking: low
 max_turns: 15
 tools: read, find, grep, bash, web_search, tavily-search
-model: "gemma26:thinking"
+model: "qwen36-27b-q8:nothinking"
 ---
 
 ## Role

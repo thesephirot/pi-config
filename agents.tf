@@ -6,12 +6,12 @@ Reusable taskflow pipelines for common workflows. Each pipeline is defined as a 
 
 | Role | Purpose | Default Model |
 |---|---|---|
-| `fast` | Low-latency, high-throughput tasks (recon, quick edits, verification) | `llama-swap/gemma26:nothinking` |
-| `strong` | Complex reasoning with moderate latency (planning, general review) | `llama-swap/qwen36-a3b-q6:thinking` |
-| `thinker` | Deep analysis with extended thinking (requirements, adversarial challenge) | `llama-swap/qwen36-27b-mtp-q3:thinking` |
-| `arbiter` | Decision-making and conflict resolution | `llama-swap/gemma31q4:thinking` |
-| `vision` | Image and design analysis (UI tasks, Figma context) | `qwen-image-2512-Q4_K_M` |
-| `reasoner` | Security and risk analysis with structured reasoning | `llama-swap/qwen36-27b-mtp-q3:thinking` |
+| `fast` | Low-latency, high-throughput tasks (recon, quick edits, verification) | `qwen3-coder-next:nothinking` |
+| `strong` | Complex reasoning with moderate latency (planning, general review) | `qwen3-coder-next:thinking` |
+| `thinker` | Deep analysis with extended thinking (requirements, adversarial challenge) | `qwen36-27b-q8:thinking` |
+| `arbiter` | Decision-making and conflict resolution | `qwen36-27b-q8:thinking` |
+| `vision` | Image and design analysis (UI tasks, Figma context) | `qwen3-coder-next:thinking` |
+| `reasoner` | Security and risk analysis with structured reasoning | `qwen36-27b-q8:thinking` |
 
 ## Built-in Agent Registry
 
